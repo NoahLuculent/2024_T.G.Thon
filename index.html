@@ -4,16 +4,34 @@
     <title>Time Letter</title>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="./main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <script src="./main.js"></script>
   </head>
   <body>
     <div id="page1" class="page">
-      <a>편지 로고 삽입</a>
+      <i id="letter_icon" class="bi bi-envelope"></i>
       <h1>시간의 편지</h1>
       <h4>느림이 주는 따듯함, 특별한 메세지</h4>
     </div>
     <div id="page2" class="page hidden">
-      <p>log-in page</p>
+      <i id="letter_icon" class="bi bi-envelope"></i>
+      <h1>시간의 편지</h1>
+      <h4>느림이 주는 따듯함, 특별한 메세지</h4>
+      <h4>로그인하여 편지를 작성해 보세요</h4>
+
+      <img id="kakaotalk" src="./kakao_mark.png" />
+      <form method="post" action="#선택 페이지">
+        <label>email</label><br />
+        <input type="email" name="email" class="info" /><br />
+
+        <label>password</label><br />
+        <input type="password" name="password" class="info" /><br /><br />
+
+        <input type="submit" value="로그인" id="login" />
+      </form>
     </div>
   </body>
 </html>
