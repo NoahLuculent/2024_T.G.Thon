@@ -1,0 +1,31 @@
+:root {
+  --primary: #ad7215;
+  --primary-light: #d0af7a;
+  --primary-dark: #b5986a;
+  --letter-note: #fffdd0;
+  --text: #462c27;
+  --text-dark: #3c3f00;
+  --white: #ffffff;
+  --gray: #767676;
+}
+
+body {
+  background-color: var(--primary);
+  font-family: Ownglyph meetme;
+  margin: 0;
+  height: 100vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+.box {
+  background-color: var(--primary-light);
+  border-radius: 1rem;
+  padding: 1rem 2rem 1rem 2rem;
+  -webkit-text-stroke: 0.2px var(--primary);
+  text-shadow: 0 0.2rem 10px #3c3f00;
+}

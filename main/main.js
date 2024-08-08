@@ -9,7 +9,7 @@ document.addEventListener("click", function () {
     page1.style.display = "none";
     page2.style.display = "flex";
     page2.classList.remove("hidden");
-  }, 500); // css 전환 시간이랑 맞추기
+  }, 500); // css transition 시간이랑 맞추기
 });
 
 // 로그인 form

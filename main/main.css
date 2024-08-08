@@ -34,6 +34,9 @@ body {
   opacity: 0;
   pointer-events: none;
 }
+.welcome-row > p {
+  text-shadow: 0 0.4rem 10px #3c3f00;
+}
 /*소셜 로그인 */
 .social_row {
   display: flex;
