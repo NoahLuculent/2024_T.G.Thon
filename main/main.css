@@ -3,15 +3,22 @@
   --primary-light: #d0af7a;
   --primary-dark: #b5986a;
   --letter-note: #fffdd0;
-  --text: #462c27;
+  --text: #ffffff;
   --text-dark: #3c3f00;
-  --white: #ffffff;
   --gray: #767676;
+}
+@font-face {
+  font-family: main_font;
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_1@1.0/Ownglyph_meetme-Rg.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 900;
 }
 
 body {
   background-color: var(--primary);
-  font-family: Ownglyph meetme;
+  font-family: main_font;
+  color: var(--text);
   margin: 0;
   height: 100vh;
   padding: 1rem;
@@ -35,6 +42,7 @@ body {
   pointer-events: none;
 }
 .welcome-row > p {
+  font-weight: bold;
   text-shadow: 0 0.4rem 10px #3c3f00;
 }
 /*소셜 로그인 */
@@ -142,9 +150,10 @@ body {
 .my-form_button {
   background: var(--primary-light);
   color: var(--text);
+  font-family: main_font;
   white-space: nowrap;
   border: none;
-  display: flex;
+  display: inline;
   justify-content: center;
   align-items: center;
   margin-top: 0rem;
@@ -176,7 +185,7 @@ body {
   margin-top: 0.5rem;
 }
 .my-form_action a {
-  color: var(--white);
+  color: var(--text);
   font-weight: 600;
   text-decoration: none;
 }
