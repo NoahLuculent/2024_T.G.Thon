@@ -81,7 +81,7 @@ body {
 
 /*이메일, 비밀번호 */
 
-.my-form {
+.login-form {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -147,7 +147,7 @@ body {
 }
 
 /*로그인 버튼 */
-.my-form_button {
+.login-form_button {
   background: var(--primary-light);
   color: var(--text);
   font-family: main_font;
@@ -170,12 +170,12 @@ body {
   transition: all 0.3s ease;
   -webkit-transition: all 0.3s ease;
 }
-.my-form_button:hover {
+.login-form_button:hover {
   background: var(--primary-dark);
 }
 
 /*새 계정 만들기 */
-.my-form_action {
+.login-form_action {
   display: flex;
   flex-direction: column;
   align-self: center;
@@ -184,15 +184,15 @@ body {
   gap: 1rem;
   margin-top: 0.5rem;
 }
-.my-form_action a {
+.login-form_action a {
   color: var(--text);
   font-weight: 600;
   text-decoration: none;
 }
-.my-form_action a:hover {
+.login-form_action a:hover {
   text-decoration: underline;
 }
-.my-form_row {
+.login-form_row {
   display: flex;
   gap: 0.5rem;
   justify-content: space-between;

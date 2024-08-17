@@ -8,10 +8,17 @@
   --white: #ffffff;
   --gray: #767676;
 }
-
+@font-face {
+  font-family: main_font;
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_1@1.0/Ownglyph_meetme-Rg.woff2")
+    format("woff2");
+  font-style: normal;
+  font-weight: 900;
+}
 body {
   background-color: var(--primary);
-  font-family: Ownglyph meetme;
+  font-family: main_font;
+  font-size: 18px;
   margin: 0;
   height: 100vh;
   padding: 1rem;

@@ -13,7 +13,7 @@ document.addEventListener("click", function () {
 });
 
 // 로그인 form
-let loginFrom = document.querySelector(".my-form");
+let loginFrom = document.querySelector(".login-form");
 
 loginFrom.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -23,5 +23,7 @@ loginFrom.addEventListener("submit", (e) => {
   console.log("Email: ", email.value);
   console.log("Password: ", password.value);
 
-  //이후에 API로 전송하는 부분이 필요함
+  // 이후에 API로 전송하는 부분이 필요함
+  // python file 생성, flask로 서버 구축하면
+  // 데이터베이스에는 편지지, 우편함 페이지 주소가 포함되어 있어야 함
 });
