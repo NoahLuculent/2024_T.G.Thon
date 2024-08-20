@@ -2,8 +2,43 @@
 <html>
   <head>
     <title>Letter of Time</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./index.css" />
+    <script src="./index.js"></script>
   </head>
   <body>
-    It is master
+    <form method="get" action="./index.html">
+      <div id="date">
+        <input type="date" id="year" class="date-select" name="" value="date" />
+        <button type="submit" id="date-submit">전송</button>
+      </div>
+      <div id="fixed-date">
+        <input
+          type="radio"
+          id="6m"
+          class="date-button"
+          name="fixed"
+          value="6month"
+        />6개월
+        <input
+          type="radio"
+          id="6m"
+          class="date-button"
+          name="fixed"
+          value="1year"
+        />1년
+      </div>
+
+      <div id="messenger">
+        <button id="kakao-select">카카오톡 친구 선택</button>
+      </div>
+      <div id="letter"><input type="text" />편지 제목 작성</div>
+      <div class="notepad-container">
+        <textarea
+          name="notepad"
+          placeholder="여기에 텍스트를 입력하세요..."
+        ></textarea>
+      </div>
+    </form>
   </body>
 </html>
