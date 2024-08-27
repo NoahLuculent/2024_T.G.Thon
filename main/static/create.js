@@ -1,6 +1,6 @@
-let email = document.getElementById("email");
-let password = document.getElementById("password");
-let password_check = document.getElementById("password-check");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const password_check = document.getElementById("password-check");
 
 let signupForm = document.querySelector(".signup-form");
 
