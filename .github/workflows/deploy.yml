@@ -1,0 +1,31 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때마다 트리거
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.GCP_PRIVATE_KEY }}
+
+    - name: Deploy to GCP server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_SERVER_USER }}@${{ secrets.GCP_SERVER_IP }} 'bash -s' <<'ENDSSH'
+        cd /path/to/your/app
+        git pull
+        # 필요한 추가 명령어 실행 예시
+        # python3 -m venv venv
+        # source venv/bin/activate
+        # pip install -r requirements.txt
+        # nohup python3 app.py &
+        ENDSSH
