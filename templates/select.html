@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Letter</title>
+    <link rel="stylesheet" href="../static/select.css" />
+    <script src="../static/select.js" defer></script>
+  </head>
+  <body>
+    <img src="../static/logo.jpg" class="logo" alt="로고 이미지" />
+    <div id="write_new" class="box">새 편지 작성</div>
+    <div id="check_mine" class="box">내게 온 편지 확인</div>
+    <img src="../static/postbox.png" class="postbox" alt="우체통 이미지" />
+
+    <script>
+      document
+        .getElementById("write_new")
+        .addEventListener("click", function () {
+          window.location.href = "write.html";
+        });
+
+      document
+        .getElementById("check_mine")
+        .addEventListener("click", function () {
+          window.location.href = "view.html";
+        });
+    </script>
+  </body>
+</html>

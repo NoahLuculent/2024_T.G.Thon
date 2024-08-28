@@ -1,0 +1,7 @@
+function openLetter(button) {
+    const letter = button.closest('.letter');
+    const senderId = letter.getAttribute('data-sender');
+
+    // 편지 내용을 보여주는 페이지로 이동 (편지 ID를 쿼리 파라미터로 전달)
+    window.location.href = `letter.html?senderId=${senderId}`;
+}
