@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Letter of Time</title>
-    <link rel="stylesheet" href="./write.css">
-    <script src="./write.js" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/write.css') }}">
+    <script src="{{ url_for('static', filename='js/write.js') }}" defer></script>
 </head>
 <body>
-    <form method="post" action="/submit_letter">
+    <form method="post" action="{{ url_for('submit_letter') }}">
         <div id="date">
             <label for="year">year</label>
             <select id="year" class="date-select" name="year">
@@ -25,7 +25,8 @@
                 <!-- 일 옵션 -->
             </select>
             <button type="submit" id="date-submit">전송</button>
-            <button type="button" id="back-button" onclick="location.href='select.html'">뒤로가기</button>
+            <button type="button" id="back-button" onclick="location.href='{{ url_for('select_page') }}'">뒤로가기</button>
+
         </div>
         
         <div id="fixed-date">

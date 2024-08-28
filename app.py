@@ -86,6 +86,34 @@ def view_letter():
         return render_template('view.html')
     else:
         return redirect(url_for('home'))
+@app.route('/letter')
+def letter_page():
+    if 'user_id' in session:
+        return render_template('letter.html')
+    else:
+        return redirect(url_for('home'))
+    
+@app.route('/select')
+def select_page():
+    return render_template('select.html')
+@app.route('/submit_letter', methods=['POST'])
+def submit_letter():
+    year = request.form['year']
+    month = request.form['month']
+    day = request.form['day']
+    fixed = request.form.get('fixed')
+    sender_name = request.form['sender-name']
+    sender_phone = request.form['sender-phone']
+    receiver_name = request.form['receiver-name']
+    receiver_phone = request.form['receiver-phone']
+    letter_title = request.form['letter-title']
+    anonymous = 'anonymous' in request.form
+    notepad = request.form['notepad']
+
+    # 여기에서 받은 데이터를 데이터베이스에 저장하거나 처리합니다.
+    # 이후, 성공 시 select.html로 리다이렉트합니다.
+    return redirect(url_for('select_page'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

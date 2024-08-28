@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>느린 우체통</title>
-    <link rel="stylesheet" href="view.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view.css') }}">
 </head>
 <body>
     <div class="container">
@@ -19,10 +19,11 @@
         <div id="letter-list">
             <!-- 편지 목록이 여기에 동적으로 추가됩니다. -->
         </div>
-        <button type="button" id="back-button" onclick="location.href='select.html'">뒤로가기</button>
+        <!-- 뒤로가기 버튼 -->
+        <button type="button" id="back-button" onclick="location.href='{{ url_for('select_page') }}'">뒤로가기</button>
     </div>
 
-    <script src="view.js"></script>
+    <script src="{{ url_for('static', filename='js/view.js') }}" defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             fetch('/api/letters')
