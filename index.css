@@ -84,12 +84,13 @@ body {
   width: 30%;
   max-width: 32rem;
   padding: 1rem 2rem;
+  align-items: center; /* 중앙 정렬 추가 */
 }
 
 .input_wrapper {
   position: relative;
   padding: 1rem;
-  margin-left: -15px; /* 오른쪽으로 조정할 수치 */
+  margin-left: -40px /* 오른쪽으로 조정할 수치 */
 }
 
 
