@@ -139,3 +139,15 @@ h2 {
     text-align: center; /* 중앙 정렬 */
     width: 100%; /* 부모 요소의 너비를 100%로 설정 */
 }
+
+#back-button {
+    font-family: 'Ownglyph_meetme-Rg', sans-serif;
+    font-size: 14px;
+    background-color: #3C3F00;
+    color: #FFFDD0;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 10px;
+    box-sizing: border-box;
+  }

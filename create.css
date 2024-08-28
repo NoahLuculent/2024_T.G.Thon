@@ -22,29 +22,28 @@ body {
   flex-direction: column; /* 세로 방향으로 정렬 */
 }
 
-
-
-
 .logo {
   margin-bottom: 1rem; /* 로고와 로그인 폼 간의 간격 */
   width: 350px; /* 필요에 따라 로고 크기 조정 */
   height: auto; /* 비율 유지 */
 }
 
-
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1rem; /* 이 부분은 필요에 따라 조정 가능 */
   background: var(--primary);
-  width: 30%;
+  width: 90%; /* 모바일에서도 폼이 중앙에 배치되도록 너비 조정 */
   max-width: 32rem;
   padding: 1rem 2rem;
+  box-sizing: border-box; /* 패딩과 너비를 함께 고려 */
+  align-items: center; /* 중앙 정렬 */
 }
 
 .input_wrapper {
   position: relative;
   margin-bottom: 1.5rem; /* 간격을 넓힘 */
+  width: 100%; /* 입력 필드가 폼 너비에 맞게 확장되도록 */
 }
 
 .input_field {
@@ -56,6 +55,7 @@ body {
   border: 2.5px solid var(--primary-light);
   transition: border-color 0.2s;
   width: 100%;
+  box-sizing: border-box; /* 패딩과 너비를 함께 고려 */
 }
 
 .input_label {
@@ -94,4 +94,3 @@ body {
 .signup-button:hover {
   background-color: #3C3F00; /* 호버 시 배경색 변화 */
 }
-
