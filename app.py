@@ -73,6 +73,21 @@ def select():
 def logout():
     session.clear()
     return redirect(url_for('home'))
+@app.route('/write')
+def write_letter():
+    if 'user_id' in session:
+        return render_template('write.html')
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/view')
+def view_letter():
+    if 'user_id' in session:
+        return render_template('view.html')
+    else:
+        return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
