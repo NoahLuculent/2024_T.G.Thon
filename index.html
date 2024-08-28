@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Time Letter</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./index.css" />
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script src="./index.js"></script>
+
+    <!-- 1. 카카오 SDK 로드 -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script type="text/javascript" src="/js/apikey.js"></script>
+    <script>
+      const KaApiKey = KAKAO_API_KEY;
+      // 2. 카카오 초기화
+      Kakao.init(KaApiKey);
+      Kakao.isInitialized();
+
+      // 3. 카카오 로그인 코드 확인
+      function loginWithKakao() {
+        Kakao.Auth.login({
+          success: function (authObj) {
+            console.log(authObj); // access토큰 값
+            Kakao.Auth.setAccessToken(authObj.access_token); // access 토큰 값 저장
+            getInfo();
+          },
+          fail: function (err) {
+            console.log(err);
+          },
+        });
+      }
+
+      // 4. 엑세스 토큰을 발급받고, 아래 함수를 호출시켜 사용자 정보 받아옴.
+      function getInfo() {
+        Kakao.API.request({
+          url: "/v2/user/me",
+          success: function (res) {
+            console.log(res);
+            var id = res.id;
+            var profile_nickname = res.kakao_account.profile.nickname;
+            localStorage.setItem("nickname", profile_nickname);
+            localStorage.setItem("id", id);
+            console.log(profile_nickname);
+            console.log(id);
+            
+            // 로그인 성공 시 select.html로 이동
+            window.location.href = "select.html";
+          },
+          fail: function (error) {
+            alert("카카오 로그인 실패" + JSON.stringify(error));
+          },
+        });
+      }
+
+      // 5. 로그아웃 기능 - 카카오 서버에 접속하는 액세스 토큰을 만료시킨다.
+      function kakaoLogOut() {
+        if (!Kakao.Auth.getAccessToken()) {
+          alert("로그인을 먼저 하세요.");
+          return;
+        }
+        Kakao.Auth.logout(function () {
+          alert("로그아웃" + Kakao.Auth.getAccessToken());
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="page1" class="page">
+      <img src="logo.jpg" class="logo" />
+    </div>
+    <div id="page2" class="page hidden">
+      <div class="welcome-row">
+        <img src="logo.jpg" class="logo" />
+      </div>
+      <div class="social_row">
+        <!-- 카카오 로그인 버튼 -->
+        <a href="#" id="kakao-login-btn" title="Use kakao" onclick="loginWithKakao()">
+          <img id="kakaotalk" src="./kakao_mark.png" alt="kakao" />
+        </a>
+      </div>
+      <form class="login-form" method="post" action="select.html">
+        <div class="input_wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="input_field"
+            placeholder="Your Email"
+            required
+          />
+          <label for="email" class="input_label">E-mail:</label>
+        </div>
+        <div class="input_wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="input_field"
+            placeholder="Your password"
+            pattern="^(?=.*[A-Za-Z])(?=.*\d)[A-Za-z\d]{6,}$"
+            required
+          />
+          <label for="password" class="input_label">Password:</label>
+        </div>
+        <div>
+          <button type="submit" class="login-form_button">로그인</button>
+        </div>
+      </form>
+      
+      <br />
+      <div class="login-form_action">
+        <div class="login-form_row">
+          <span>처음 오셨나요?</span>
+          <a href="./create.html" title="Create Account">계정 만들기</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
