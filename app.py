@@ -128,7 +128,7 @@ def letter_page(letter_id):
         if letter:
             return jsonify({
                 'title': letter.get('letter_title'),
-                'sender': letter.get('sender_name'),
+                'sender_name': letter.get('sender_name'),
                 'sent_date': letter.get('sent_at'),
                 'received_date': letter.get('received_date'),
                 'content': letter.get('content')
@@ -150,7 +150,7 @@ def submit_letter():
     receiver_name = request.form['receiver-name'],
     receiver_phone = request.form['receiver-phone'],
     letter_title = request.form['letter-title'],
-    anonymous = 'anonymous' in request.form
+    # anonymous ='anonymous' in request.form
     notepad = request.form['notepad']
     
     # 여기에서 받은 데이터를 데이터베이스에 저장하거나 처리합니다.

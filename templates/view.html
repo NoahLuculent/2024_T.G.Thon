@@ -26,6 +26,7 @@
           class="letter"
           data-sender="{{ letter['sender_name'] }}"
           data-original-index="{{ loop.index0 }}"
+          anonymous="{{ letter['anonymous'] }}"
         >
           <div class="letter-title">{{ letter['letter_title'] }}</div>
           <div class="letter-timer" data-time="{{ letter['time'] }}">
