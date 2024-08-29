@@ -86,6 +86,8 @@ def kakao():
 
 @app.route('/kakao/register', methods=['POST'])
 def kakao_register():
+    print(f"Session after Kakao login: {session}")
+
     data = request.json
     kakao_user_id = data.get('kakao_id')
     nickname = data.get('nickname')
@@ -145,12 +147,7 @@ def select():
     else:
         return redirect(url_for('home'))
 
-@app.route('/write')
-def write_letter():
-    if 'user_id' in session:
-        return render_template('write.html')
-    else:
-        return redirect(url_for('home'))
+
 
 # 편지 보기 페이지
 @app.route('/letter/<letter_id>')
@@ -207,14 +204,22 @@ def submit_letter():
     return redirect(url_for('done'))
 
 
+@app.route('/write')
+def write_letter():
+    if 'user_id' in session or 'kakao_user_id' in session:
+        return render_template('write.html')
+    else:
+        return redirect(url_for('home'))
+
 @app.route('/view')
 def view_letter():
-    if 'user_id' in session:
+    if 'user_id' in session or 'kakao_user_id' in session:
         phone = session['phone']
         letters = letters_collection.find({"receiver_phone": phone})
         return render_template('view.html', letters=letters)
     else:
         return redirect(url_for('home'))
+
         
 
 @app.route('/done')
