@@ -67,21 +67,63 @@ def login():
 
 @app.route('/kakao', methods=["GET"])
 def kakao():
+    kakao_user_id = session.get('kakao_user_id')
 
-        #번호 있으면 :
-        #카톡 로그인 이력? session[]
-        return redirect(url_for('select'))
-    #else:
-     #   return render_template('phonenum.html')
+    if not kakao_user_id:
+        return redirect(url_for('home'))  # 세션에 사용자 ID가 없으면 홈으로 리디렉션
+
+    # 사용자 정보 가져오기
+    user = users_collection.find_one({"kakao_id": kakao_user_id})
+    print(f"User fetched from DB: {user}")  # 디버깅을 위해 사용자 정보 출력
+
+    # 사용자의 정보가 있고, 전화번호가 존재하고 비어있지 않은 경우에만 select.html로 이동
+    if user and 'phone' in user and user['phone'].strip():
+        return redirect(url_for('select'))  # select.html로 이동
+    else:
+        return render_template('phonenum.html')  # 전화번호 입력 페이지로 이동
+
+
 
 @app.route('/kakao/register', methods=['POST'])
+def kakao_register():
+    print(f"Session after Kakao login: {session}")
+
+    data = request.json
+    kakao_user_id = data.get('kakao_id')
+    nickname = data.get('nickname')
+
+    if not kakao_user_id:
+        return jsonify({"success": False, "message": "Kakao ID is missing"}), 400
+
+    # 사용자 정보 업데이트 또는 새 사용자 생성
+    user = users_collection.find_one_and_update(
+        {"kakao_id": kakao_user_id},
+        {"$set": {"nickname": nickname}},
+        upsert=True,  # 사용자가 없다면 생성
+        return_document=True
+    )
+
+    session['kakao_user_id'] = kakao_user_id
+    return jsonify({"success": True}), 200
+
+@app.route('/kakao/phone', methods=['POST'])
 def kakao_phone():
     phone = request.form['phone']
-    user_data = {
-        'phone': phone
-    }
-    users_collection.insert_one(user_data)
+    kakao_user_id = session.get('kakao_user_id')
+
+    if not kakao_user_id:
+        return redirect(url_for('home'))
+
+    # MongoDB에 전화번호 업데이트
+    users_collection.update_one(
+        {"kakao_id": kakao_user_id},
+        {"$set": {"phone": phone}}
+    )
+
+    # 세션에 전화번호 저장
     session['phone'] = phone
+
+    # 전화번호 입력 후 select.html로 이동
     return redirect(url_for('select'))
 
 
@@ -97,26 +139,15 @@ db = client['Timeletter']
 letters_collection = db['letters']
 
 
-
-
+# select 페이지
 @app.route('/select')
 def select():
-    if 'user_id' in session:
-        return render_template('select.html', user_email=session['email'])
+    if 'user_id' in session or 'kakao_user_id' in session:
+        return render_template('select.html', user_email=session.get('email'))
     else:
         return redirect(url_for('home'))
-    
-@app.route('/select')
-def select_page():
-    return render_template('select.html')
 
 
-@app.route('/write')
-def write_letter():
-    if 'user_id' in session:
-        return render_template('write.html')
-    else:
-        return redirect(url_for('home'))
 
 # 편지 보기 페이지
 @app.route('/letter/<letter_id>')
@@ -173,14 +204,22 @@ def submit_letter():
     return redirect(url_for('done'))
 
 
+@app.route('/write')
+def write_letter():
+    if 'user_id' in session or 'kakao_user_id' in session:
+        return render_template('write.html')
+    else:
+        return redirect(url_for('home'))
+
 @app.route('/view')
 def view_letter():
-    if 'user_id' in session:
+    if 'user_id' in session or 'kakao_user_id' in session:
         phone = session['phone']
         letters = letters_collection.find({"receiver_phone": phone})
         return render_template('view.html', letters=letters)
     else:
         return redirect(url_for('home'))
+
         
 
 @app.route('/done')
