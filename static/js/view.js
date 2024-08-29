@@ -138,16 +138,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const formattedTime = formatExtendedTime(remainingTime);
         timerElement.setAttribute("data-time", formattedTime);
         timerElement.innerHTML = `${formattedTime} left`;
+
         openButton.classList.add("hidden"); // 버튼 숨김
       } else {
         if (!timerElement.classList.contains("revealed")) {
           timerElement.classList.add("revealed");
-          if (letter.getAttribute("anonymous")) {
-            timerElement.innerHTML = `익명이 보낸 편지가 도착했습니다`;
-          } else {
-            const senderName = letter.getAttribute("data-sender");
-            timerElement.innerHTML = `${senderName}이(가) 보낸 편지가 도착했습니다`;
-          }
+          // 익명 파트 쓰는 부분
+          const senderName = letter.getAttribute("data-sender");
+          timerElement.innerHTML = `${senderName}이(가) 보낸 편지가 도착했습니다`;
 
           // 편지 미리보기를 표시
           const previewElement = letter.querySelector(".letter-preview");
@@ -157,22 +155,20 @@ document.addEventListener("DOMContentLoaded", () => {
           openButton.classList.remove("hidden");
 
           // 알림 추가
-          /*  alert(
+          alert(
             `편지 제목: ${
               letter.querySelector(".letter-title").innerText
             }가 도착했습니다!`
-          ); */
+          );
           clearInterval(timerInterval);
         }
       }
     });
   }
 
-  function openLetter(button) {
-    const letter = button.closest(".letter");
+  /*
     const previewElement = letter.querySelector(".letter-preview");
-    previewElement.classList.remove("hidden"); // 미리보기 표시
-  }
+    previewElement.classList.remove("hidden"); // 미리보기 표시 */
 
   setInterval(updateTimers, 1000); // 1초마다 타이머 업데이트
 });
