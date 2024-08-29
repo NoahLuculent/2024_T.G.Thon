@@ -13,14 +13,16 @@ document.addEventListener("click", function () {
 });
 
 // 카카오 SDK 초기화
-Kakao.init('46e82f2f8a5929e5352cf27290d36421');
+Kakao.init("46e82f2f8a5929e5352cf27290d36421");
 console.log(Kakao.isInitialized());
 
 // 카카오 로그인 버튼 클릭 이벤트
-document.getElementById('kakao-login-btn').addEventListener('click', function (e) {
-  e.preventDefault();
-  loginWithKakao();
-});
+document
+  .getElementById("kakao-login-btn")
+  .addEventListener("click", function (e) {
+    e.preventDefault();
+    loginWithKakao();
+  });
 
 // 카카오 로그인 처리
 function loginWithKakao() {
@@ -32,8 +34,8 @@ function loginWithKakao() {
     },
     fail: function (err) {
       console.error(err);
-      alert('카카오 로그인 실패');
-    }
+      alert("카카오 로그인 실패");
+    },
   });
 }
 
@@ -46,11 +48,11 @@ function getInfo() {
       var profile_nickname = res.kakao_account.profile.nickname;
       localStorage.setItem("nickname", profile_nickname);
       localStorage.setItem("id", id);
-      window.location.href = "/select";
+      window.location.href = "";
     },
     fail: function (error) {
       alert("카카오 로그인 실패" + JSON.stringify(error));
-    }
+    },
   });
 }
 

@@ -39,11 +39,7 @@
         {% endfor %}
       </div>
       <!-- 뒤로가기 버튼 -->
-      <button
-        type="button"
-        id="back-button"
-        onclick="location.href='select.html'"
-      >
+      <button type="button" id="back-button" onclick="location.href='select'">
         뒤로가기
       </button>
     </div>
@@ -111,7 +107,31 @@
 
       function openLetter(button) {
         // letter.html로 이동
-        window.location.href = "letter.html";
+        const urlParams = new URLSearchParams(window.location.search);
+        const letterId = urlParams.get("letter_id");
+        fetch(`/letter/${letterId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
+            } else {
+              document.getElementById("letter-title").textContent = data.title;
+              document.getElementById("sent-date").textContent =
+                "보낸 날짜: " + data.sent_date;
+              document.getElementById("received-date").textContent =
+                "받은 날짜: " + data.received_date;
+              document.getElementById("sender-name").textContent =
+                "보낸 이: " + data.sender;
+              document.getElementById("letter-content").textContent =
+                data.content;
+            }
+          })
+          .catch((error) => {
+            alert("편지를 불러오는 중 오류가 발생했습니다.");
+          });
+
+        window.location.href =
+          "{{ url_for('letter_page', letter_id=letterId) }}";
       }
     </script>
   </body>

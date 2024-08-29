@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from pymongo import MongoClient
+from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import secrets
+from bson import ObjectId
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
@@ -63,6 +65,26 @@ def login():
         print("Login failed: Invalid email or password")  # 실패 로그
         return jsonify({"error": "Invalid email or password"}), 401
 
+@app.route('/kakao', methods=["GET"])
+def kakao():
+
+        #번호 있으면 :
+        #카톡 로그인 이력? session[]
+        return redirect(url_for('select'))
+    #else:
+     #   return render_template('phonenum.html')
+
+@app.route('/kakao/register', methods=['POST'])
+def kakao_phone():
+    phone = request.form['phone']
+    user_data = {
+        'phone': phone
+    }
+    users_collection.insert_one(user_data)
+    session['phone'] = phone
+    return redirect(url_for('select'))
+
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -74,8 +96,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['Timeletter']
 letters_collection = db['letters']
 
-# 기존 데이터 제거 (중복 방지)
-letters_collection.delete_many({})
+
 
 
 @app.route('/select')
@@ -97,12 +118,26 @@ def write_letter():
     else:
         return redirect(url_for('home'))
 
-@app.route('/letter')
-def letter_page():
-    if 'user_id' in session:
-        return render_template('letter.html')
-    else:
-        return redirect(url_for('home'))
+# 편지 보기 페이지
+@app.route('/letter/<letter_id>')
+def letter_page(letter_id):
+    
+    # MongoDB에서 편지 데이터 가져오기
+    try:
+        letter = letters_collection.find_one({"_id": ObjectId(letter_id)})
+        if letter:
+            return jsonify({
+                'title': letter.get('letter_title'),
+                'sender': letter.get('sender_name'),
+                'sent_date': letter.get('sent_at'),
+                'received_date': letter.get('received_date'),
+                'content': letter.get('content')
+            })
+        else:
+            return jsonify({'error': '편지를 찾을 수 없습니다.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/submit_letter', methods=['POST'])
 def submit_letter():
@@ -130,7 +165,8 @@ def submit_letter():
     'receiver_phone': receiver_phone,
     'letter_title': letter_title,
     'anonymous': 'anonymous' in request.form,
-    'notepad': notepad
+    'notepad': notepad,
+    'sent_at': datetime.utcnow()
     }
     letters_collection.insert_one(letter)
     # 이후, 성공 시 select.html로 리다이렉트합니다.
