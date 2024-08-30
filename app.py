@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
 app.config['JSON_AS_ASCII'] = False 
 # MongoDB 클라이언트 설정 (로컬 MongoDB에 연결)
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
 db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
 letters_collection = db['letters']  # 편지 데이터를 저장할 컬렉션 설정
