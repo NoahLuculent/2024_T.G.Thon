@@ -36,7 +36,15 @@ body {
   justify-content: center;
   transition: opacity 0.5s;
 }
+.hiddenme {
+  display: none;
+}
 
+#error-message {
+  color: red;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
 .hidden {
   opacity: 0;
   pointer-events: none;
