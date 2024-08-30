@@ -19,6 +19,12 @@ db = client['Timeletter']
 users_collection = db['userdata']
 
 # 나머지 코드 (경로, 라우팅, 데이터베이스 작업 등)
+try:
+    client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
+    db = client['Timeletter']
+    print("Connected to MongoDB Atlas successfully!")
+except Exception as e:
+    print(f"Could not connect to MongoDB Atlas: {str(e)}")
 
 
 @app.route('/')
@@ -145,6 +151,14 @@ def logout():
 client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
 db = client['Timeletter']
 letters_collection = db['letters']
+@app.route('/test_db')
+def test_db():
+    try:
+        # 데이터베이스 연결 테스트
+        db_stats = db.command("ping")
+        return jsonify({"status": "success", "db_stats": db_stats}), 200
+    except Exception as e:
+        return jsonify({"status": "fail", "message": str(e)}), 500
 
 
 # select 페이지
