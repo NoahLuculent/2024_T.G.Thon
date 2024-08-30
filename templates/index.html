@@ -42,40 +42,38 @@
       </div>
 
       <!-- 이메일과 비밀번호를 이용한 로그인 폼 -->
-      <form class="login-form" method="post" action="{{ url_for('login') }}">
+      <form id="login-form" class="login-form" method="post">
         <div class="input_wrapper">
-          <!-- 이메일 입력 필드 -->
-          <input
-            type="email"
-            id="email"
-            name="email"
-            class="input_field"
-            placeholder="Your Email"
-            required
-          />
-          <!-- 이메일 입력 필드의 레이블 -->
-          <label for="email" class="input_label">E-mail:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                class="input_field"
+                placeholder="Your Email"
+                required
+            />
+            <label for="email" class="input_label">E-mail:</label>
         </div>
         <div class="input_wrapper">
-          <!-- 비밀번호 입력 필드 -->
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="input_field"
-            placeholder="Your password"
-            pattern="^(?=.*[A-Za-Z])(?=.*\d)[A-Za-z\d]{6,}$"
-            required
-          />
-          <!-- 비밀번호 입력 필드의 레이블 -->
-          <label for="password" class="input_label">Password:</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                class="input_field"
+                placeholder="Your password"
+                pattern="^(?=.*[A-Za-Z])(?=.*\d)[A-Za-z\d]{6,}$"
+                required
+            />
+            <label for="password" class="input_label">Password:</label>
+        </div>
+        <div id="error-message" class="hiddenme">
+            <!-- 여기에 오류 메시지가 표시됩니다 -->
         </div>
         <div>
-          <!-- 로그인 버튼 -->
-          <button type="submit" class="login-form_button">로그인</button>
+            <button type="submit" class="login-form_button">로그인</button>
         </div>
-      </form>
-
+    </form>
+    
       <br />
       <!-- 계정 생성 링크 -->
       <div class="login-form_action">
