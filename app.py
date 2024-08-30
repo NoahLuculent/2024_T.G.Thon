@@ -7,9 +7,10 @@ from bson import ObjectId
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
+app.config['JSON_AS_ASCII'] = False  # 편지 데이터를 넘기는 과정에서 아스키코드 변환을 막음
 
 # MongoDB 클라이언트 설정 (로컬 MongoDB에 연결)
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://dongwan:dkssudgktpdy@cluster0.2qfcn.mongodb.net/')
 db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
 
@@ -67,7 +68,7 @@ def login():
 
 @app.route('/kakao', methods=["GET"])
 def kakao():
-    kakao_user_id = session.get('kakao_user_id')
+    kakao_user_id = session('kakao_user_id')
 
     if not kakao_user_id:
         return redirect(url_for('home'))  # 세션에 사용자 ID가 없으면 홈으로 리디렉션
@@ -134,7 +135,7 @@ def logout():
 
 
 # MongoDB에 데이터 추가 스크립트 (임의로 3개의 데이터 추가)
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://dongwan:dkssudgktpdy@cluster0.2qfcn.mongodb.net/')
 db = client['Timeletter']
 letters_collection = db['letters']
 
@@ -148,27 +149,12 @@ def select():
         return redirect(url_for('home'))
 
 
-
-# 편지 보기 페이지
-@app.route('/letter/<letter_id>')
-def letter_page(letter_id):
-    
-    # MongoDB에서 편지 데이터 가져오기
-    try:
-        letter = letters_collection.find_one({"_id": ObjectId(letter_id)})
-        if letter:
-            return jsonify({
-                'title': letter.get('letter_title'),
-                'sender_name': letter.get('sender_name'),
-                'sent_date': letter.get('sent_at'),
-                'received_date': letter.get('received_date'),
-                'content': letter.get('content')
-            })
-        else:
-            return jsonify({'error': '편지를 찾을 수 없습니다.'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
+@app.route('/write')
+def write_letter():
+    if 'user_id' in session or 'kakao_user_id' in session:
+        return render_template('write.html')
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/submit_letter', methods=['POST'])
 def submit_letter():
@@ -200,16 +186,10 @@ def submit_letter():
     'sent_at': datetime.utcnow()
     }
     letters_collection.insert_one(letter)
-    # 이후, 성공 시 select.html로 리다이렉트합니다.
+    # 이후, 성공 시 done.html로 리다이렉트합니다.
     return redirect(url_for('done'))
 
 
-@app.route('/write')
-def write_letter():
-    if 'user_id' in session or 'kakao_user_id' in session:
-        return render_template('write.html')
-    else:
-        return redirect(url_for('home'))
 
 @app.route('/view')
 def view_letter():
@@ -219,6 +199,34 @@ def view_letter():
         return render_template('view.html', letters=letters)
     else:
         return redirect(url_for('home'))
+
+# 편지 찾기 페이지
+@app.route('/letter/<letter_id>')
+def letter_page(letter_id):
+    
+    # MongoDB에서 편지 데이터 가져오기
+    try:
+        letter = letters_collection.find_one({"_id": ObjectId(letter_id)})
+        if letter:
+            data= jsonify({
+                'title': letter['letter_title'],
+                'sender_name': letter['sender_name'],
+                'sent_date': letter['sent_at'],
+                #'received_date': letter['received_date'],
+                'content': letter['notepad']
+            })
+            return render_template('letter.html', letter=data)
+        else:
+            return jsonify({'error': '편지를 찾을 수 없습니다.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# 편지 보기 페이지
+# @app.route('/slowLetter')
+# def letter_page(letter):
+#     return render_template('letter.html', letter=letter)
+
+
 
         
 
