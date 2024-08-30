@@ -20,26 +20,21 @@
         </select>
       </div>
       <div id="letter-list">
-        <!-- 편지 목록이 여기에 동적으로 추가됩니다. -->
         {% for letter in letters %}
-        <div
-          class="letter"
-          letter-id="{{ letter['_id'] }}"
-          data-sender="{{ letter['sender_name'] }}"
-          data-original-index="{{ loop.index0 }}"
-          anonymous="{{ letter['anonymous'] }}"
-        >
-          <div class="letter-title">{{ letter['letter_title'] }}</div>
-          <div class="letter-timer" data-time="{{ letter['time'] }}">
-            {{ letter['time'] }} left
+        <div class="letter" letter-id="{{ letter['_id'] }}" data-sender="{{ letter['sender_name'] }}" data-original-index="{{ loop.index0 }}">
+            <div class="letter-title">{{ letter['letter_title'] }}</div>
+            <div class="letter-timer" data-time="{{ letter['time_left'] }}">
+              {{ letter['time_left'] | round(0, 'floor') }}일 0시간 0분 0초 남음
           </div>
-          <div class="letter-preview hidden">{{ letter['preview'] }}</div>
-          <button class="open-button hidden" onclick="openLetter(this)">
-            편지 열기
-          </button>
+          
+            <div class="letter-preview hidden">{{ letter['preview'] }}</div>
+            <button class="open-button {% if not letter.can_open %}hidden{% endif %}" onclick="openLetter(this)">
+                편지 열기
+            </button>
         </div>
         {% endfor %}
       </div>
+      
       <!-- 뒤로가기 버튼 -->
       <button type="button" id="back-button" onclick="location.href='select'">
         뒤로가기
@@ -47,74 +42,5 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/view.js') }}" defer></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        fetch("/api/letters")
-          .then((response) => response.json())
-          .then((letters) => {
-            const letterList = document.getElementById("letter-list");
-            letterList.innerHTML = ""; // 초기화
-
-            letters.forEach((letter) => {
-              const letterDiv = document.createElement("div");
-              letterDiv.className = "letter";
-              letterDiv.setAttribute("data-sender", letter.id);
-
-              const letterHeader = document.createElement("div");
-              letterHeader.className = "letter-header";
-
-              const starDiv = document.createElement("div");
-              starDiv.className = "star";
-              starDiv.setAttribute("onclick", "toggleFavorite(this)");
-
-              const letterInfo = document.createElement("div");
-              letterInfo.className = "letter-info";
-
-              const letterTitle = document.createElement("p");
-              letterTitle.className = "letter-title";
-              letterTitle.textContent = letter.title;
-
-              const letterPreview = document.createElement("p");
-              letterPreview.className = "letter-preview hidden";
-              letterPreview.textContent = "편지 미리보기";
-
-              const letterTimer = document.createElement("div");
-              letterTimer.className = "letter-timer";
-              letterTimer.setAttribute("data-time", letter.time_left);
-              letterTimer.setAttribute("data-sender", letter.id);
-              letterTimer.textContent = `${letter.time_left} left`;
-
-              const openButton = document.createElement("button");
-              openButton.className = "open-button";
-              openButton.textContent = "열람 가능";
-              openButton.setAttribute("onclick", "openLetter(this)");
-
-              // 열람 가능 여부에 따라 버튼 표시
-              if (!letter.can_open) {
-                openButton.classList.add("hidden");
-              }
-
-              letterInfo.appendChild(letterTitle);
-              letterInfo.appendChild(letterPreview);
-              letterHeader.appendChild(starDiv);
-              letterHeader.appendChild(letterInfo);
-              letterDiv.appendChild(letterHeader);
-              letterDiv.appendChild(letterTimer);
-              letterDiv.appendChild(openButton);
-
-              letterList.appendChild(letterDiv);
-            });
-          });
-      });
-
-      function openLetter(button) {
-        // letter.html로 이동
-        const letter = button.closest(".letter");
-        const letterId = letter.getAttribute("letter-id");
-        sessionStorage.setItem("letterId", letterId);
-
-        location.href = "/slowLetter";
-      }
-    </script>
   </body>
 </html>
