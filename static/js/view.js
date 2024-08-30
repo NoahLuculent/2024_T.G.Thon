@@ -1,3 +1,12 @@
+function openLetter(button) {
+  // letter.html로 이동
+  const letter = button.closest(".letter");
+  const letterId = letter.getAttribute("letter-id");
+  sessionStorage.setItem("letterId", letterId);
+
+  location.href = "/slowLetter";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input");
   const letterList = document.getElementById("letter-list");
@@ -25,33 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   filter.addEventListener("change", function () {
     const sortedLetters = sortLetters(this.value);
     renderLetters(sortedLetters);
-  });
-
-  // 즐겨찾기 기능
-  function toggleFavorite(star) {
-    star.classList.toggle("favorited");
-    const letter = star.closest(".letter");
-
-    if (star.classList.contains("favorited")) {
-      letterList.prepend(letter); // 목록의 가장 위로 이동
-    } else {
-      const originalIndex = parseInt(letter.dataset.originalIndex);
-      const beforeLetter = letters.find(
-        (l) => parseInt(l.dataset.originalIndex) === originalIndex - 1
-      );
-      if (beforeLetter) {
-        beforeLetter.insertAdjacentElement("afterend", letter);
-      } else {
-        letterList.appendChild(letter);
-      }
-    }
-  }
-
-  // 모든 즐겨찾기 버튼에 이벤트 리스너 추가
-  document.querySelectorAll(".star").forEach((star) => {
-    star.addEventListener("click", function () {
-      toggleFavorite(this);
-    });
   });
 
   // 편지 정렬 함수
@@ -86,13 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function parseExtendedTime(timeString) {
+  function parseExtendedTime(seconds) {
     let months = 0,
       days = 0,
       hours = 0,
-      minutes = 0,
-      seconds = 0;
-    const parts = timeString.split(" ");
+      minutes = 0;
+    const parts = seconds.split(" ");
 
     parts.forEach((part) => {
       if (part.includes("months")) months = parseInt(part);
@@ -100,12 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (part.includes("hours")) hours = parseInt(part);
       if (part.includes("minutes")) minutes = parseInt(part);
       if (part.includes("secs")) seconds = parseInt(part);
-      if (part.includes(":")) {
-        const timeParts = part.split(":");
-        hours = parseInt(timeParts[0]);
-        minutes = parseInt(timeParts[1]);
-        seconds = parseInt(timeParts[2]);
-      }
     });
 
     return (
@@ -114,8 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatExtendedTime(seconds) {
-    const months = Math.floor(seconds / (30 * 24 * 3600));
-    seconds %= 30 * 24 * 3600;
     const days = Math.floor(seconds / (24 * 3600));
     seconds %= 24 * 3600;
     const hours = Math.floor(seconds / 3600);
@@ -123,52 +96,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const minutes = Math.floor(seconds / 60);
     seconds %= 60;
 
-    return `${months}months ${days}days ${hours}hours ${minutes}minutes ${seconds}secs`;
+    return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
   }
+
   function updateTimers() {
     letters.forEach((letter) => {
       const timerElement = letter.querySelector(".letter-timer");
       const openButton = letter.querySelector(".open-button");
-      let remainingTime = parseExtendedTime(
-        timerElement.getAttribute("data-time")
-      );
+      let remainingTime = parseInt(timerElement.getAttribute("data-time"));
 
       if (remainingTime > 0) {
         remainingTime -= 1;
         const formattedTime = formatExtendedTime(remainingTime);
-        timerElement.setAttribute("data-time", formattedTime);
-        timerElement.innerHTML = `${formattedTime} left`;
+        timerElement.setAttribute("data-time", remainingTime); // 남은 시간 업데이트
+        timerElement.innerHTML = `${formattedTime} 남음`;
 
         openButton.classList.add("hidden"); // 버튼 숨김
       } else {
         if (!timerElement.classList.contains("revealed")) {
           timerElement.classList.add("revealed");
-          // 익명 파트 쓰는 부분
           const senderName = letter.getAttribute("data-sender");
           timerElement.innerHTML = `${senderName}이(가) 보낸 편지가 도착했습니다`;
 
-          // 편지 미리보기를 표시
           const previewElement = letter.querySelector(".letter-preview");
           previewElement.classList.remove("hidden");
 
-          // 열람 가능 버튼 표시
           openButton.classList.remove("hidden");
-
-          // 알림 추가
-          alert(
-            `편지 제목: ${
-              letter.querySelector(".letter-title").innerText
-            }가 도착했습니다!`
-          );
-          clearInterval(timerInterval);
+          alert(`편지 제목: ${letter.querySelector(".letter-title").innerText}가 도착했습니다!`);
         }
       }
     });
   }
 
-  /*
-    const previewElement = letter.querySelector(".letter-preview");
-    previewElement.classList.remove("hidden"); // 미리보기 표시 */
-
-  setInterval(updateTimers, 1000); // 1초마다 타이머 업데이트
+  // 타이머 업데이트를 1초마다 실행
+  const timerInterval = setInterval(updateTimers, 1000);
 });
