@@ -7,17 +7,17 @@ from bson import ObjectId
 import json
 
 import requests  # 추가: 알리고 API 호출을 위해 필요
+from datetime import datetime, timezone,timedelta
 
+utc_time = datetime.now(timezone.utc)
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
 app.config['JSON_AS_ASCII'] = False 
 # MongoDB 클라이언트 설정 (로컬 MongoDB에 연결)
-client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
+client = MongoClient('mongodb://localhost:27017/')
 db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
 letters_collection = db['letters']  # 편지 데이터를 저장할 컬렉션 설정
-
-
 
 @app.route('/')
 def home():
@@ -138,28 +138,30 @@ def select():
         return render_template('select.html', user_email=session.get('email'))
     else:
         return redirect(url_for('home'))
-@app.route('/letter/<letter_id>')
-def letter_find(letter_id):
-    
-    # MongoDB에서 편지 데이터 가져오기
+@app.route('/letter/<letter_id>', methods=['GET'])
+def get_letter(letter_id):
     try:
-        # dict 형태로 받아옴
-        letter_dict = letters_collection.find_one({"_id": ObjectId(letter_id)})
-        if letter_dict:
-            # letter_json = json.load(letter)
-            return jsonify({
-                'title': letter_dict['letter_title'],
-                'sender_name': letter_dict['sender_name'],
-                'sent_date': letter_dict['sent_at'],
-                'received_date': letter_dict['received_date'],
-                'content': letter_dict['notepad']
-            })
-            
-            # return jsonify(data)
-        else:
+        # ObjectId로 변환
+        letter_object_id = ObjectId(letter_id)
+        
+        # MongoDB에서 편지 찾기
+        letter = letters_collection.find_one({'_id': letter_object_id})
+        
+        if not letter:
             return jsonify({'error': '편지를 찾을 수 없습니다.'}), 404
+        
+        # 편지 데이터를 JSON으로 반환
+        return jsonify({
+            'letter_title': letter.get('letter_title', '제목 없음'),
+            'sent_date': letter.get('sent_at', '날짜 없음'),
+            'received_date': letter.get('received_date', '날짜 없음'),
+            'sender_name': letter.get('sender_name', '보낸 이 없음'),
+            'notepad': letter.get('notepad', '내용 없음')
+        })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # 예외 발생 시 500 상태 코드와 함께 오류 메시지 반환
+        app.logger.error(f'Error retrieving letter: {e}')
+        return jsonify({'error': '서버 오류가 발생했습니다.'}), 500
 @app.route('/test_db')
 def test_db():
     try:
@@ -182,7 +184,11 @@ def submit_letter():
     receiver_phone = request.form['receiver-phone']
     letter_title = request.form['letter-title']
     notepad = request.form['notepad']
-    
+    # open_date를 생성하여 저장
+    try:
+        open_date = datetime(int(year), int(month), int(day), tzinfo=timezone.utc)
+    except ValueError:
+        return "Invalid date", 400  # 날짜가 잘못된 경우 오류 처리
     # 여기에서 받은 데이터를 데이터베이스에 저장하거나 처리합니다.
     letter = {
         'year': year,
@@ -196,7 +202,8 @@ def submit_letter():
         'letter_title': letter_title,
         'anonymous': 'anonymous' in request.form,
         'notepad': notepad,
-        'sent_at': datetime.utcnow()
+       'sent_at': datetime.now(timezone.utc),
+       'received_date' : open_date
     }
     letters_collection.insert_one(letter)
 
@@ -245,14 +252,42 @@ def write_letter():
     else:
         return redirect(url_for('home'))
 
+
 @app.route('/view')
 def view_letter():
     if 'user_id' in session or 'kakao_user_id' in session:
         phone = session['phone']
         letters = letters_collection.find({"receiver_phone": phone})
-        return render_template('view.html', letters=letters)
+
+        # 현재 시간 가져오기
+        now = datetime.now()  # UTC가 아닌 로컬 시간 사용
+        letter_list = []
+
+        for letter in letters:
+            # 편지의 열람 가능 날짜 계산
+            open_date = datetime(
+                year=int(letter['year']),
+                month=int(letter['month']),
+                day=int(letter['day'])
+            )
+            remaining_time = (open_date - now).total_seconds()
+
+            letter_data = {
+                '_id': letter['_id'],
+                'letter_title': letter['letter_title'],
+                'sender_name': letter['sender_name'],
+                'time_left': max(0, remaining_time),  # 남은 시간이 0 이하일 경우 0으로 설정
+                'preview': letter['notepad'],  # 미리보기 내용
+                'can_open': remaining_time <= 0  # 열람 가능 여부
+            }
+            letter_list.append(letter_data)
+
+        return render_template('view.html', letters=letter_list)
     else:
         return redirect(url_for('home'))
+
+
+
 # 편지 보기 페이지
 @app.route('/slowLetter')
 def letter_page():
