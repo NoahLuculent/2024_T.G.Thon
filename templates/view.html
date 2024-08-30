@@ -111,8 +111,9 @@
         // letter.html로 이동
         const letter = button.closest(".letter");
         const letterId = letter.getAttribute("letter-id");
+        sessionStorage.setItem("letterId", letterId);
 
-        location.href = `/letter/${letterId}`;
+        location.href = "/slowLetter";
       }
     </script>
   </body>

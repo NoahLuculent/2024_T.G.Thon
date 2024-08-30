@@ -89,23 +89,36 @@
     </div>
 
     <script>
-      const data = JSONp.parse(letter);
+      document.addEventListener("DOMContentLoaded", function () {
+        // sessionStorage에서 letterId 추출
+        const letterId = sessionStorage.getItem("letterId");
 
-      document.getElementById("letter-title").textContent = data.title;
-      document.getElementById("sent-date").textContent =
-        "보낸 날짜: " + data.sent_date;
-      /* document.getElementById("received-date").textContent =
-        "받은 날짜: " + data.received_date;
-      */ document.getElementById("sender-name").textContent =
-        "보낸 이: " + data.sender;
-      document.getElementById("letter-content").textContent = data.content;
-
-      /*.catch((error) => {
-          alert("편지를 불러오는 중 오류가 발생했습니다.");
-        }*/
+        // 서버에서 편지 데이터 가져오기
+        fetch(`/letter/${letterId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
+            } else {
+              document.getElementById("letter-title").textContent =
+                data.letter_title;
+              document.getElementById("sent-date").textContent =
+                "보낸 날짜: " + data.sent_date;
+              document.getElementById("received-date").textContent =
+                "받은 날짜: " + data.received_date;
+              document.getElementById("sender-name").textContent =
+                "보낸 이: " + data.sender_name;
+              document.getElementById("letter-content").textContent =
+                data.notepad;
+            }
+          })
+          .catch((error) => {
+            alert("편지를 불러오는 중 오류가 발생했습니다.");
+          });
+      });
       function closeView() {
         alert("열람이 종료되었습니다.");
-        location.href = "{{ url_for('view_letter')";
+        window.location.href = "{{ url_for('view_letter') }}";
       }
     </script>
   </body>

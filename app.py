@@ -4,13 +4,14 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import secrets
 from bson import ObjectId
+import json
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
 app.config['JSON_AS_ASCII'] = False  # 편지 데이터를 넘기는 과정에서 아스키코드 변환을 막음
 
 # MongoDB 클라이언트 설정 (로컬 MongoDB에 연결)
-client = MongoClient('mongodb+srv://dongwan:dkssudgktpdy@cluster0.2qfcn.mongodb.net/')
+client = MongoClient('mongodb://localhost:27017/')
 db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
 
@@ -48,6 +49,8 @@ def register():
 
     return redirect(url_for('home'))  # 가입 후 로그인 페이지로 리디렉션
 
+
+
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form['email']
@@ -61,7 +64,7 @@ def login():
         session['email'] = user['email']
         session['phone'] = user['phone']
         print(f"Login successful: {session}")  # 세션 정보 출력
-        return redirect(url_for('select'))
+        return jsonify({"success": True, "redirect_url": url_for('select')})
     else:
         print("Login failed: Invalid email or password")  # 실패 로그
         return jsonify({"error": "Invalid email or password"}), 401
@@ -135,7 +138,7 @@ def logout():
 
 
 # MongoDB에 데이터 추가 스크립트 (임의로 3개의 데이터 추가)
-client = MongoClient('mongodb+srv://dongwan:dkssudgktpdy@cluster0.2qfcn.mongodb.net/')
+client = MongoClient('mongodb://localhost:27017/')
 db = client['Timeletter']
 letters_collection = db['letters']
 
@@ -180,6 +183,7 @@ def submit_letter():
     'sender_phone': sender_phone,
     'receiver_name': receiver_name,
     'receiver_phone': receiver_phone,
+    'received_date': f'{year}년 {month}월 {day}일',
     'letter_title': letter_title,
     'anonymous': 'anonymous' in request.form,
     'notepad': notepad,
@@ -202,33 +206,33 @@ def view_letter():
 
 # 편지 찾기 페이지
 @app.route('/letter/<letter_id>')
-def letter_page(letter_id):
+def letter_find(letter_id):
     
     # MongoDB에서 편지 데이터 가져오기
     try:
-        letter = letters_collection.find_one({"_id": ObjectId(letter_id)})
-        if letter:
-            data= jsonify({
-                'title': letter['letter_title'],
-                'sender_name': letter['sender_name'],
-                'sent_date': letter['sent_at'],
-                #'received_date': letter['received_date'],
-                'content': letter['notepad']
+        # dict 형태로 받아옴
+        letter_dict = letters_collection.find_one({"_id": ObjectId(letter_id)})
+        if letter_dict:
+            # letter_json = json.load(letter)
+            return jsonify({
+                'title': letter_dict['letter_title'],
+                'sender_name': letter_dict['sender_name'],
+                'sent_date': letter_dict['sent_at'],
+                'received_date': letter_dict['received_date'],
+                'content': letter_dict['notepad']
             })
-            return render_template('letter.html', letter=data)
+            
+            # return jsonify(data)
         else:
             return jsonify({'error': '편지를 찾을 수 없습니다.'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 # 편지 보기 페이지
-# @app.route('/slowLetter')
-# def letter_page(letter):
-#     return render_template('letter.html', letter=letter)
+@app.route('/slowLetter')
+def letter_page():
+    return render_template('letter.html')
 
-
-
-        
 
 @app.route('/done')
 def done():
@@ -236,7 +240,6 @@ def done():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
