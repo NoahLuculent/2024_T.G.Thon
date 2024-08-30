@@ -17,6 +17,9 @@ db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
 letters_collection = db['letters']  # 편지 데이터를 저장할 컬렉션 설정
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
 @app.route('/')
 def home():
     return render_template('index.html')
