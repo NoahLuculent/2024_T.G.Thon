@@ -47,6 +47,8 @@ def register():
 
     return redirect(url_for('home'))  # 가입 후 로그인 페이지로 리디렉션
 
+
+
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form['email']
@@ -60,7 +62,7 @@ def login():
         session['email'] = user['email']
         session['phone'] = user['phone']
         print(f"Login successful: {session}")  # 세션 정보 출력
-        return redirect(url_for('select'))
+        return jsonify({"success": True, "redirect_url": url_for('select')})
     else:
         print("Login failed: Invalid email or password")  # 실패 로그
         return jsonify({"error": "Invalid email or password"}), 401
@@ -228,7 +230,6 @@ def done():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
