@@ -66,6 +66,31 @@ function getInfo() {
       }
   });
 }
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // 폼의 기본 제출 동작을 막음
+
+    var form = event.target;
+    var formData = new FormData(form);
+
+    fetch('/login', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        // 에러 메시지를 표시할 요소에 텍스트 삽입
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = data.error;
+        errorMessageElement.classList.remove('hiddenme');
+      } else if (data.success) {
+        // 로그인 성공 시 서버에서 받은 URL로 리다이렉트
+        window.location.href = data.redirect_url;
+      }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
 
 // 로그인 폼 처리
 document.querySelector(".login-form").addEventListener("submit", function (e) {
