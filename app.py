@@ -10,10 +10,25 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # 16바이트 길이의 무작위 키 생성
 app.config['JSON_AS_ASCII'] = False  # 편지 데이터를 넘기는 과정에서 아스키코드 변환을 막음
 
+<<<<<<< HEAD
 # MongoDB 클라이언트 설정 (로컬 MongoDB에 연결)
 client = MongoClient('mongodb://localhost:27017/')
 db = client['Timeletter']  # 데이터베이스 이름 설정
 users_collection = db['userdata']  # 사용자 데이터를 저장할 컬렉션 설정
+=======
+# MongoDB 클러스터 클라이언트 설정
+# 실제 <db_password>를 해당 클러스터의 비밀번호로 교체
+client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
+
+# 원하는 데이터베이스 이름 설정 (예: 'Timeletter')
+db = client['Timeletter']
+
+# 사용자 데이터를 저장할 컬렉션 설정 (예: 'userdata')
+users_collection = db['userdata']
+
+
+
+>>>>>>> 722412484492ac70bfb88b974e409ff9b3b148e7
 
 @app.route('/')
 def home():
@@ -49,8 +64,6 @@ def register():
 
     return redirect(url_for('home'))  # 가입 후 로그인 페이지로 리디렉션
 
-
-
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form['email']
@@ -64,7 +77,7 @@ def login():
         session['email'] = user['email']
         session['phone'] = user['phone']
         print(f"Login successful: {session}")  # 세션 정보 출력
-        return jsonify({"success": True, "redirect_url": url_for('select')})
+        return redirect(url_for('select'))
     else:
         print("Login failed: Invalid email or password")  # 실패 로그
         return jsonify({"error": "Invalid email or password"}), 401
@@ -138,9 +151,21 @@ def logout():
 
 
 # MongoDB에 데이터 추가 스크립트 (임의로 3개의 데이터 추가)
+<<<<<<< HEAD
 client = MongoClient('mongodb://localhost:27017/')
+=======
+client = MongoClient('mongodb+srv://jeachim3:timeofletter2024@timeofletter.jhf6hup.mongodb.net/?retryWrites=true&w=majority&appName=Timeofletter')
+>>>>>>> 722412484492ac70bfb88b974e409ff9b3b148e7
 db = client['Timeletter']
 letters_collection = db['letters']
+@app.route('/test_db')
+def test_db():
+    try:
+        # 데이터베이스 연결 테스트
+        db_stats = db.command("ping")
+        return jsonify({"status": "success", "db_stats": db_stats}), 200
+    except Exception as e:
+        return jsonify({"status": "fail", "message": str(e)}), 500
 
 
 # select 페이지
@@ -240,6 +265,7 @@ def done():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
